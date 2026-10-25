@@ -62,7 +62,35 @@ function showWeather(data) {
     document.getElementById("time").textContent = `Updated: ${data.time.replace("T", " ")}`;
     resultCard.classList.remove("hidden");
 }
+let latestRequest = 0;
 
+async function loadWeather(city) {
+    const requestId = ++latestRequest;
+    message.textContent = "Loading...";
+    resultCard.classList.add("hidden");
+
+    try {
+        const response = await fetch(`/api/weather?city=${encodeURIComponent(city)}`);
+        if (requestId !== latestRequest) return;
+
+        if (!response.ok) {
+            message.textContent =
+                response.status === 404
+                    ? "City not found. Check the spelling and try again."
+                    : "Something went wrong. Please try again.";
+            return;
+        }
+
+        const data = await response.json();
+        if (requestId !== latestRequest) return;
+
+        message.textContent = "";
+        showWeather(data);
+    } catch (error) {
+        if (requestId !== latestRequest) return;
+        message.textContent = "Could not reach the server. Check your connection.";
+    }
+}
 async function loadWeather(city) {
     message.textContent = "Loading...";
     resultCard.classList.add("hidden");

@@ -11,7 +11,8 @@ FORECAST_URL = "https://api.open-meteo.com/v1/forecast"
 
 
 def get_coordinates(city):
-    response = requests.get(GEOCODING_URL, params={"name": city, "count": 1})
+    response = requests.get(GEOCODING_URL, params={
+                            "name": city, "count": 1}, timeout=10)
     data = response.json()
     results = data.get("results")
     if not results:
@@ -33,6 +34,7 @@ def get_weather(latitude, longitude, current="temperature_2m,weather_code,wind_s
             "current": current,
             "timezone": "auto",
         },
+        timeout=10
     )
     data = response.json()
     return data["current"]
@@ -45,11 +47,16 @@ def status():
 
 @app.get("/api/weather")
 def weather(city: str):
-    place = get_coordinates(city)
-    if place is None:
-        raise HTTPException(status_code=404, detail="City not found")
+    try:
+        place = get_coordinates(city)
+        if place is None:
+            raise HTTPException(status_code=404, detail="City not found")
 
-    current = get_weather(place["latitude"], place["longitude"])
+        current = get_weather(place["latitude"], place["longitude"])
+    except requests.RequestException:
+        raise HTTPException(
+            status_code=502, detail="Weather service unavailable")
+
     return {
         "city": place["name"],
         "temperature": current["temperature_2m"],
