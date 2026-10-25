@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather App</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+    <main class="app">
+        <header class="top">
+            <h1>Weather</h1>
+            <button id="theme-toggle" type="button" aria-label="Switch theme">🌙</button>
+        </header>
+
+        <form id="search-form">
+            <input id="city-input" type="text" placeholder="Enter a city" required>
+            <button type="submit">Search</button>
+        </form>
+
+        <p id="message"></p>
+
+        <section id="result" class="card hidden">
+            <h2 id="city-name"></h2>
+            <p id="condition"></p>
+            <p id="temperature"></p>
+            <p id="wind"></p>
+            <p id="time"></p>
+        </section>
+    </main>
+
+    <script src="/static/script.js"></script>
+</body>
+
+</html>
